@@ -13,7 +13,7 @@ int* twoSum(int* nums, int numsSize, int target);
 
 
 int main(int argc, const char * argv[]) {
-    int* testArr = (int*)malloc(sizeof(int)*4);
+    int * testArr = (int *)malloc(sizeof(int) * 4);
     testArr[0]  = 2;
     testArr[1]  = 7;
     testArr[2]  = 11;
@@ -35,7 +35,7 @@ int main(int argc, const char * argv[]) {
 
 int* twoSum(int* nums, int numsSize, int target) {
     // static int result[] = {0, 0};
-    int* result = (int*)malloc(sizeof(int)*2);
+    int * result = (int *)malloc(sizeof(int) * 2);
     for (int i = 0; i < numsSize - 1; ++i) {
         int firstNum = nums[i];
         for (int j = i + 1; j < numsSize; ++j) {
