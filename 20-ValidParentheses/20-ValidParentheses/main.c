@@ -20,11 +20,13 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define MAXSIZE 8000
+
 bool isValid(char * s);
 
 int main(int argc, const char * argv[]) {
 
-    char * testCase = (char *)malloc(sizeof(char) * 10000);
+    char * testCase = (char *)malloc(sizeof(char) * 8000);
     // 不要直接将字符串字面量(也是常量)赋值给字符串指针,
     //这会导致指针指向一个无名数组的首字符
 //    char * testCase = "({()[]{}}){}()";
@@ -45,8 +47,86 @@ int main(int argc, const char * argv[]) {
 }
 
 // 正确的解法: 应该用栈来解决.
-// ...
 
+typedef struct {
+    char * data;
+    // 用于记录指针所在位置
+    int top;
+}Stack;
+
+void push(Stack * stack, char element) {
+    stack->top++;
+    stack->data[stack->top] = element;
+}
+
+char pop(Stack * stack) {
+    if (stack->top == -1) {
+        return '\0';
+    }
+    char element = stack->data[stack->top];
+    stack->data[stack->top] = '\0';
+    stack->top--;
+    return element;
+}
+
+
+bool isValid(char * s) {
+    
+    int length = (int)strlen(s);
+    // 添加这个判断可以极大地减少跑 TestCase 的时间
+    if(length % 2 == 1)
+        return false;
+    
+    Stack * aStack = (Stack *)malloc(sizeof(Stack));
+    // 根据传入的字符串的大小来创建大小
+    aStack->data = (char *)malloc(sizeof(char) * length);
+    aStack->top = - 1;
+    
+    for (int i = 0; i < length; ++i) {
+        if (*s == '(' || *s == '[' || *s == '{') {
+            push(aStack, *s);
+        } else {
+            switch (*s) {
+                case ')':
+                    if (pop(aStack) != '(') {
+                        free(aStack->data);
+                        return false;
+                    }
+                    break;
+                case ']':
+                    if (pop(aStack) != '[') {
+                        free(aStack->data);
+                        return false;
+                    }
+                    break;
+                case '}':
+                    if (pop(aStack) != '{') {
+                        free(aStack->data);
+                        return false;
+                    }
+                    break;
+                    
+                default:
+                    free(aStack->data);
+                    return false;
+                    break;
+            }
+        }
+        s++;
+    }
+    
+    free(aStack->data);
+    
+    if (aStack->top > -1) {
+        return false;
+    }
+    
+    return true;
+}
+
+
+
+/*
 // 这个解法(循环删除合法的括号)可以得到正确的结果,
 //但是当 TestCase 足够长的时候, 会提示超时.
 bool isValid(char * s) {
@@ -71,3 +151,4 @@ bool isValid(char * s) {
     
     return true;
 }
+ */
